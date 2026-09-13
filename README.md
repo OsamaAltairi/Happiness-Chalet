@@ -1,6 +1,6 @@
-# Happiness Chalet - واحة الغروب
+# Happiness Chalet - شاليه هابينيس
 
-موقع تعريفي فاخر لشاليه Happiness Chalet مع هوية «واحة الغروب».
+موقع تعريفي فاخر لشاليه Happiness Chalet مع هوية «شاليه هابينيس».
 
 ## المميزات
 
