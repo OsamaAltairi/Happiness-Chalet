@@ -60,7 +60,7 @@ window.addEventListener('scroll', () => {
 
 // WhatsApp message customization
 function updateWhatsAppLinks() {
-    const phoneNumber = '966783112244'; // Replace with actual number
+    const phoneNumber = '967783112244';
     const defaultMessage = 'مرحبًا، أرغب في الاستفسار عن أسعار حجز شاليه Happiness.';
     
     // Update all WhatsApp links
@@ -173,7 +173,7 @@ function initBookingCalculator() {
 الأطفال من 4 إلى 10 سنوات: ${details.children}
 الأطفال أقل من 4 سنوات: ${details.toddlers}
 السعر التقديري: ${details.total.toLocaleString('en-US')} ريال`;
-        window.open(`https://wa.me/966783112244?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+        window.open(`https://wa.me/967783112244?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
     });
 
     updateSummary();
@@ -321,40 +321,6 @@ function initLightbox() {
 
 // Initialize lightbox
 initLightbox();
-
-// Dark Mode Toggle
-function initDarkMode() {
-    const themeToggle = document.querySelector('.theme-toggle');
-    const themeIcon = themeToggle.querySelector('i');
-    
-    // Check for saved theme or prefer-color-scheme
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-        document.body.classList.add('dark-mode');
-        themeIcon.classList.remove('fa-moon');
-        themeIcon.classList.add('fa-sun');
-    }
-    
-    // Toggle theme
-    themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        
-        if (document.body.classList.contains('dark-mode')) {
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
-            localStorage.setItem('theme', 'light');
-        }
-    });
-}
-
-// Initialize dark mode
-initDarkMode();
 
 // Weather API
 function initWeather() {
