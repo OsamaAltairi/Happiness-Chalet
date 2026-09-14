@@ -21,7 +21,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // Add active class to current section in navigation
-window.addEventListener('scroll', () => {
+let activeSectionTicking = false;
+
+function updateActiveSection() {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-menu a');
     
@@ -32,7 +34,7 @@ window.addEventListener('scroll', () => {
         const sectionHeight = section.clientHeight;
         const headerHeight = document.querySelector('.header').offsetHeight;
         
-        if (scrollY >= (sectionTop - headerHeight - 100)) {
+        if (window.scrollY >= (sectionTop - headerHeight - 100)) {
             current = section.getAttribute('id');
         }
     });
@@ -41,9 +43,20 @@ window.addEventListener('scroll', () => {
         link.classList.remove('active');
         if (link.getAttribute('href') === `#${current}`) {
             link.classList.add('active');
+            link.setAttribute('aria-current', 'page');
+        } else {
+            link.removeAttribute('aria-current');
         }
     });
-});
+    activeSectionTicking = false;
+}
+
+window.addEventListener('scroll', () => {
+    if (!activeSectionTicking) {
+        window.requestAnimationFrame(updateActiveSection);
+        activeSectionTicking = true;
+    }
+}, { passive: true });
 
 // WhatsApp message customization
 function updateWhatsAppLinks() {
@@ -51,7 +64,7 @@ function updateWhatsAppLinks() {
     const defaultMessage = 'مرحبًا، أرغب في الاستفسار عن أسعار حجز شاليه Happiness.';
     
     // Update all WhatsApp links
-    document.querySelectorAll('a[href*="whatsapp"]').forEach(link => {
+    document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
         link.href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(defaultMessage)}`;
     });
 }
@@ -89,36 +102,101 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Booking price calculator and WhatsApp handoff
+function initBookingCalculator() {
+    const form = document.querySelector('#booking-form');
+    if (!form) return;
+
+    const offerInput = document.querySelector('#booking-offer');
+    const dateInput = document.querySelector('#booking-date');
+    const adultsInput = document.querySelector('#booking-adults');
+    const childrenInput = document.querySelector('#booking-children');
+    const toddlersInput = document.querySelector('#booking-toddlers');
+    const totalElement = document.querySelector('#booking-total');
+    const messageElement = document.querySelector('#booking-message');
+    const today = new Date();
+    const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000);
+    dateInput.min = localToday.toISOString().split('T')[0];
+
+    function getDetails() {
+        const offer = offerInput.value;
+        const adults = Math.max(Number(adultsInput.value) || 0, 0);
+        const children = Math.max(Number(childrenInput.value) || 0, 0);
+        const toddlers = Math.max(Number(toddlersInput.value) || 0, 0);
+        const childUnits = Math.ceil(children / 2);
+        const capacity = offer === 'family' ? 5 : 20;
+        const basePrice = offer === 'family' ? 25000 : 40000;
+        const extraAdults = Math.max(adults - capacity, 0);
+        const extraChildren = Math.max(childUnits - Math.max(capacity - adults, 0), 0);
+        const total = basePrice + (extraAdults * 1000) + (extraChildren * 500);
+        const date = dateInput.value ? new Date(`${dateInput.value}T12:00:00`) : null;
+        const familyDay = date && [0, 1, 2, 6].includes(date.getDay());
+        return { offer, adults, children, toddlers, total, guests: adults + childUnits, date, familyDay };
+    }
+
+    function updateSummary() {
+        const details = getDetails();
+        const offerName = details.offer === 'family' ? 'العائلة السعيدة' : 'الحجز اليومي';
+        let message = 'الأطفال الأقل من 4 سنوات مجاناً.';
+        if (details.guests < 2) message = 'يرجى إدخال شخصين على الأقل للحجز.';
+        if (details.offer === 'family' && details.date && !details.familyDay) message = 'العرض متاح أيام السبت والأحد والإثنين والثلاثاء.';
+        if (details.guests > (details.offer === 'family' ? 5 : 20)) message = 'تمت إضافة تكلفة الأشخاص الزائدين إلى السعر التقديري.';
+        totalElement.textContent = `${details.total.toLocaleString('en-US')} ريال`;
+        messageElement.textContent = `${offerName}: ${message}`;
+    }
+
+    form.addEventListener('input', updateSummary);
+    form.addEventListener('change', updateSummary);
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const details = getDetails();
+        if (!details.date) {
+            messageElement.textContent = 'يرجى اختيار تاريخ الحجز أولاً.';
+            dateInput.focus();
+            return;
+        }
+        if (details.guests < 2) {
+            messageElement.textContent = 'يرجى إدخال شخصين على الأقل للحجز.';
+            adultsInput.focus();
+            return;
+        }
+        if (details.offer === 'family' && !details.familyDay) {
+            messageElement.textContent = 'يرجى اختيار يوم مناسب لعرض العائلة السعيدة.';
+            dateInput.focus();
+            return;
+        }
+        const offerName = details.offer === 'family' ? 'العائلة السعيدة' : 'الحجز اليومي';
+        const text = `مرحباً، أرغب في حجز شاليه هابينيس.
+العرض: ${offerName}
+التاريخ: ${details.date.toLocaleDateString('ar-YE')}
+الكبار: ${details.adults}
+الأطفال من 4 إلى 10 سنوات: ${details.children}
+الأطفال أقل من 4 سنوات: ${details.toddlers}
+السعر التقديري: ${details.total.toLocaleString('en-US')} ريال`;
+        window.open(`https://wa.me/966783112244?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+    });
+
+    updateSummary();
+}
+
+initBookingCalculator();
+
 // Scroll Animations
 function initScrollAnimations() {
     const animationObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
+            if (entry.isIntersecting) entry.target.classList.add('visible');
         });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-    });
-    
-    // Add animation classes to elements
+    }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
+
     document.querySelectorAll('section').forEach((section, index) => {
-        if (index % 2 === 0) {
-            section.classList.add('slide-in-left');
-        } else {
-            section.classList.add('slide-in-right');
-        }
+        section.classList.add(index % 2 === 0 ? 'slide-in-left' : 'slide-in-right');
         animationObserver.observe(section);
     });
-    
-    // Animate cards
     document.querySelectorAll('.facility-card, .gallery-item').forEach(card => {
         card.classList.add('scale-in');
         animationObserver.observe(card);
     });
-    
-    // Animate headings
     document.querySelectorAll('.section-header').forEach(header => {
         header.classList.add('fade-in');
         animationObserver.observe(header);
@@ -140,6 +218,30 @@ function initHoverEffects() {
 
 // Initialize hover effects
 initHoverEffects();
+
+// Gallery category filters
+function initGalleryFilters() {
+    const filters = document.querySelectorAll('.gallery-filter');
+    const items = document.querySelectorAll('.gallery-item[data-category]');
+    if (!filters.length || !items.length) return;
+
+    filters.forEach(filter => {
+        filter.addEventListener('click', () => {
+            const selectedFilter = filter.dataset.filter;
+            filters.forEach(button => {
+                const isActive = button === filter;
+                button.classList.toggle('active', isActive);
+                button.setAttribute('aria-pressed', String(isActive));
+            });
+            items.forEach(item => {
+                const matches = selectedFilter === 'all' || item.dataset.category.split(' ').includes(selectedFilter);
+                item.classList.toggle('is-hidden', !matches);
+            });
+        });
+    });
+}
+
+initGalleryFilters();
 
 // Lightbox functionality
 function initLightbox() {
@@ -256,9 +358,8 @@ initDarkMode();
 
 // Weather API
 function initWeather() {
-    const apiKey = 'YOUR_API_KEY'; // You need to get a free API key from OpenWeather
+    const apiKey = '';
     const city = 'Sanaa,YE';
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=ar`;
     
     // Fallback data in case API fails
     const fallbackData = {
@@ -280,6 +381,13 @@ function initWeather() {
         const iconElement = document.querySelector('.weather-icon i');
         iconElement.className = `fas ${data.icon}`;
     }
+
+    if (!apiKey) {
+        updateWeatherDisplay(fallbackData);
+        return;
+    }
+
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=ar`;
     
     // Try to fetch from API
     fetch(apiUrl)
@@ -298,7 +406,6 @@ function initWeather() {
             updateWeatherDisplay(weatherData);
         })
         .catch(error => {
-            console.log('Using fallback weather data:', error);
             updateWeatherDisplay(fallbackData);
         });
     
@@ -321,7 +428,7 @@ initWeather();
 // PWA Service Worker Registration
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('./sw.js')
             .then(registration => {
                 console.log('Service Worker registered with scope:', registration.scope);
             })
@@ -363,18 +470,25 @@ function initParallax() {
     const hero = document.querySelector('.hero');
     const layers = document.querySelectorAll('.hero-parallax-layer');
     
-    if (!hero || !layers.length) return;
+    if (!hero || !layers.length || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let parallaxTicking = false;
     
     window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        const rate = scrolled * -0.5;
-        
-        layers.forEach((layer, index) => {
-            const speed = (index + 1) * 0.1;
-            const yPos = -(rate * speed);
-            layer.style.transform = `translate3d(0, ${yPos}px, 0)`;
+        if (parallaxTicking) return;
+        parallaxTicking = true;
+        window.requestAnimationFrame(() => {
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.5;
+
+            layers.forEach((layer, index) => {
+                const speed = (index + 1) * 0.1;
+                const yPos = -(rate * speed);
+                layer.style.transform = `translate3d(0, ${yPos}px, 0)`;
+            });
+            parallaxTicking = false;
         });
-    });
+    }, { passive: true });
     
     // Mouse move parallax
     hero.addEventListener('mousemove', (e) => {
@@ -398,36 +512,19 @@ function initPageLoader() {
     
     if (!pageLoader || !progressBar) return;
     
-    // Simulate loading progress
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += Math.random() * 20;
-        if (progress > 100) progress = 100;
-        progressBar.style.width = progress + '%';
-        
-        if (progress >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-                pageLoader.classList.add('loaded');
-                // Trigger entrance animations
-                document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in').forEach(el => {
-                    el.classList.add('visible');
-                });
-            }, 500);
-        }
-    }, 100);
-    
-    // Force complete after 3 seconds
-    setTimeout(() => {
-        clearInterval(interval);
+    const finishLoading = () => {
         progressBar.style.width = '100%';
-        setTimeout(() => {
+        window.setTimeout(() => {
             pageLoader.classList.add('loaded');
-            document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in').forEach(el => {
-                el.classList.add('visible');
-            });
-        }, 500);
-    }, 3000);
+        }, 150);
+    };
+
+    if (document.readyState === 'complete') {
+        finishLoading();
+    } else {
+        window.addEventListener('load', finishLoading, { once: true });
+        window.setTimeout(finishLoading, 1200);
+    }
 }
 
 // Initialize page loader
