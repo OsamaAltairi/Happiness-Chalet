@@ -1841,130 +1841,6 @@ tr:hover {
     transform: scale(1.02);
 }
 
-/* Dark Mode Toggle */
-.theme-toggle {
-    background: none;
-    border: 2px solid var(--primary-color);
-    color: var(--primary-color);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    transition: var(--transition);
-    margin-right: 10px;
-}
-
-.theme-toggle:hover {
-    background-color: var(--primary-color);
-    color: var(--white);
-}
-
-/* Dark Mode Styles */
-body.dark-mode {
-    --primary-color: #D2691E;
-    --secondary-color: #FFD700;
-    --accent-color: #FFD700;
-    --light-color: #2F4F4F;
-    --dark-color: #F5F5DC;
-    --text-color: #F5F5DC;
-    --text-light: #CCCCCC;
-    --white: #1a1a1a;
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    background-color: #1a1a1a;
-    color: var(--text-color);
-}
-
-body.dark-mode .header {
-    background-color: #2a2a2a;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-body.dark-mode .footer {
-    background-color: #2a2a2a;
-}
-
-body.dark-mode .testimonials {
-    background-color: #2a2a2a;
-}
-
-body.dark-mode .location {
-    background-color: #2a2a2a;
-}
-
-body.dark-mode .facility-card,
-body.dark-mode .testimonial-card,
-body.dark-mode .prices-table {
-    background-color: #2a2a2a;
-    color: var(--text-color);
-}
-
-body.dark-mode .price-note {
-    background-color: #3a3a3a;
-}
-
-body.dark-mode .booking-section {
-    background: linear-gradient(135deg, #24201a, #2a2a2a);
-}
-
-body.dark-mode .booking-form,
-body.dark-mode .booking-fields input,
-body.dark-mode .booking-fields select {
-    background: #2a2a2a;
-    color: var(--white);
-    border-color: rgba(255, 215, 0, 0.25);
-}
-
-body.dark-mode .booking-result {
-    background: #3a3a3a;
-}
-
-body.dark-mode .booking-result p,
-body.dark-mode .booking-fields label {
-    color: var(--white);
-}
-
-body.dark-mode .offer-card {
-    background: #2a2a2a;
-    border-color: rgba(255, 215, 0, 0.25);
-}
-
-body.dark-mode .offer-card-featured {
-    background: #332b1a;
-    border-color: var(--accent-color);
-}
-
-body.dark-mode .offer-heading h3,
-body.dark-mode .offer-capacity {
-    color: var(--white);
-}
-
-body.dark-mode .gallery-image-real,
-body.dark-mode .about-image-real,
-body.dark-mode .family-image-real {
-    filter: brightness(0.9);
-}
-
-body.dark-mode .events {
-    background: linear-gradient(135deg, #D2691E, #8B4513);
-}
-
-body.dark-mode .events-price-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .events-table th {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-body.dark-mode .events-note {
-    background: rgba(255, 255, 255, 0.05);
-}
-
 /* WhatsApp Floating Button */
 .whatsapp-float {
     position: fixed;
@@ -2054,17 +1930,6 @@ body.dark-mode .events-note {
     align-items: center;
     gap: 15px;
 }
-body.dark-mode .gallery-filter {
-    background: #2a2a2a;
-    color: var(--white);
-    border-color: rgba(255, 215, 0, 0.25);
-}
-body.dark-mode .gallery-filter.active,
-body.dark-mode .gallery-filter:hover {
-    background: var(--accent-color);
-    color: #2a2a2a;
-}
-
 .footer-logo-image {
     height: 50px;
     width: auto;
@@ -2294,12 +2159,6 @@ body.dark-mode .gallery-filter:hover {
     
     .btn-text {
         display: none;
-    }
-    
-    .theme-toggle {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
     }
     
     /* About Section */
