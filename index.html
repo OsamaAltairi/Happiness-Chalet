@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happiness Chalet - شاليه هابينيس</title>
+    <meta name="description" content="شاليه هابينيس في صنعاء، وجهة عائلية للراحة والخصوصية والحجز اليومي.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="image" href="images/happy/41.jpeg" fetchpriority="high">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,12 +15,34 @@
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#8B4513">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="شاليه هابينيس | Happiness Chalet">
+        <meta property="og:description" content="وجهة عائلية للراحة والخصوصية والحجز اليومي في صنعاء.">
+        <meta property="og:image" content="images/happy/41.jpeg">
+        <meta name="twitter:card" content="summary_large_image">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Happiness Chalet">
     <link rel="apple-touch-icon" href="images/logo.png">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Happiness Chalet">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LodgingBusiness",
+        "name": "شاليه هابينيس",
+        "alternateName": "Happiness Chalet",
+        "description": "شاليه عائلي للراحة والخصوصية والحجز اليومي في صنعاء.",
+        "image": "images/happy/41.jpeg",
+        "telephone": "+967783112244",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "خلف مدارس الريادة بأرتل - شارع الأربعين شرق محطة نجاد رقم ٢",
+            "addressLocality": "صنعاء",
+            "addressCountry": "YE"
+        }
+    }
+    </script>
 </head>
 <body>
     <!-- Header -->
@@ -42,7 +68,7 @@
                     <li role="none"><a href="#contact" role="menuitem" aria-label="تواصل معنا">تواصل معنا</a></li>
                 </ul>
                 <div class="header-actions">
-                    <a href="https://wa.me/966783112244?text=مرحبًا، أرغب في الاستفسار عن أسعار حجز شاليه Happiness." class="whatsapp-btn" target="_blank">
+                        <a href="https://wa.me/966783112244?text=مرحبًا، أرغب في الاستفسار عن أسعار حجز شاليه Happiness." class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
                         <i class="fab fa-whatsapp"></i> <span class="btn-text">احجز عبر واتساب</span>
                     </a>
                     <button class="theme-toggle" aria-label="تبديل الوضع الداكن">
@@ -77,7 +103,7 @@
             <div class="hero-parallax-layer layer-3"></div>
         </div>
         <div class="hero-background">
-            <img src="images/happy/41.jpeg" alt="Happiness Chalet Hero Image" class="hero-image" loading="lazy">
+            <img src="images/happy/41.jpeg" alt="منظر من شاليه هابينيس" class="hero-image" width="1920" height="1080" fetchpriority="high" decoding="async">
         </div>
         <div class="hero-overlay"></div>
         <!-- Scroll Indicator -->
@@ -120,44 +146,50 @@
                 <h2>الصور والتجربة</h2>
                 <p>استكشف جمال الشاليه</p>
             </div>
+            <div class="gallery-filters" role="group" aria-label="تصفية صور الشاليه">
+                <button class="gallery-filter active" type="button" data-filter="all" aria-pressed="true">الكل</button>
+                <button class="gallery-filter" type="button" data-filter="exterior" aria-pressed="false">خارجي</button>
+                <button class="gallery-filter" type="button" data-filter="interior" aria-pressed="false">داخلي</button>
+                <button class="gallery-filter" type="button" data-filter="family" aria-pressed="false">عائلي</button>
+            </div>
             <div class="gallery-grid">
-                <div class="gallery-item">
+                <div class="gallery-item" data-category="exterior family">
                     <img src="images/happy/13.jpeg" alt="الساحة الخارجية" class="gallery-image-real" loading="lazy">
                     <h3>الساحة الخارجية</h3>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" data-category="interior">
                     <img src="images/happy/29.jpeg" alt="المجلس الداخلي" class="gallery-image-real" loading="lazy">
                     <h3>المجلس الداخلي</h3>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" data-category="exterior family">
                     <img src="images/happy/3.jpg" alt="الجلسات الخارجية" class="gallery-image-real" loading="lazy">
                     <h3>الجلسات الخارجية</h3>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" data-category="exterior">
                     <img src="images/happy/31.jpeg" alt="المرافق الداخلية" class="gallery-image-real" loading="lazy">
                     <h3>ركن الشواية</h3>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" data-category="family">
                     <img src="images/happy/27.jpeg" alt="المناظر الطبيعية" class="gallery-image-real" loading="lazy">
                     <h3>العاب الاطفال</h3>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" data-category="exterior family">
                     <img src="images/happy/39.jpeg" alt="الجلسات العائلية" class="gallery-image-real" loading="lazy">
                     <h3>مكان الكوشة</h3>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" data-category="exterior">
                     <img src="images/happy/16.jpeg" alt="الأجواء المسائية" class="gallery-image-real" loading="lazy">
                     <h3>الأجواء المسائية</h3>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" data-category="interior family">
                     <img src="images/happy/11.jpg" alt="الاسترخاء والراحة" class="gallery-image-real" loading="lazy">
                     <h3>الاسترخاء والراحة</h3>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" data-category="interior">
                     <img src="images/happy/42.jpeg" alt="المطبخ" class="gallery-image-real" loading="lazy">
                     <h3>المطبخ</h3>
                 </div>
-                <div class="gallery-item">
+                <div class="gallery-item" data-category="interior">
                     <img src="images/happy/37.jpeg" alt="الحمامات" class="gallery-image-real" loading="lazy">
                     <h3>الحمامات</h3>
                 </div>
@@ -213,42 +245,102 @@
                 <p>اختر ما يناسبك من عروضنا المميزة</p>
             </div>
             <div class="prices-table">
-                <table role="table" aria-label="أسعار حجز شاليه هابينيس">
-                    <thead>
-                        <tr role="row">
-                            <th role="columnheader">عدد الأشخاص</th>
-                            <th role="columnheader">(9 ص - 9 م)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr role="row">
-                            <td role="cell">20 شخص</td>
-                            <td role="cell">40,000 ريال</td>
-                        </tr>
-                        <!-- <tr role="row">
-                            <td role="cell">30 شخص</td>
-                            <td role="cell">50,000 ريال</td>
-                        </tr>
-                        <tr role="row">
-                            <td role="cell">40 شخص</td>
-                            <td role="cell">60,000 ريال</td>
-                        </tr> -->
-                    </tbody>
-                </table>
-                <div class="price-note">
-                    <p><strong>ملاحظة:</strong>
-من 9 صباحاً إلى 9 مساءً من شخصين إلى 20 شخص بـ 40,000 ريال
+                <div class="offers-grid">
+                    <article class="offer-card" aria-labelledby="standard-offer-title">
+                        <div class="offer-heading">
+                            <span class="offer-number">العرض الأول</span>
+                            <h3 id="standard-offer-title">الحجز اليومي</h3>
+                            <p class="offer-time">9 ص - 9 م</p>
+                        </div>
+                        <div class="offer-price">
+                            <strong>40,000</strong>
+                            <span>ريال</span>
+                        </div>
+                        <p class="offer-capacity">من شخصين إلى 20 شخص</p>
+                        <div class="price-note">
+                            <p><strong>ملاحظة:</strong></p>
+                            <ul>
+                                <li>الكبير الإضافي: 1,000 ريال.</li>
+                                <li>الطفل الإضافي: 500 ريال.</li>
+                                <li>الأطفال من 4 إلى 10 سنوات: كل طفلين يُحسبان بشخص واحد.</li>
+                                <li>أقل من 4 سنوات: مجاناً.</li>
+                            </ul>
+                        </div>
+                    </article>
 
-أي زيادة عن 20 شخص تحتسب كما يلي:
-
-الكبير: 1,000 ريال.
-الطفل: 500 ريال.
-
-الأطفال من 4 إلى 10 سنوات:
-كل طفلين يُحسبان بشخص واحد. 
- أقل من 4 سنوات: مجاناً</p>
+                    <article class="offer-card offer-card-featured" aria-labelledby="family-offer-title">
+                        <div class="offer-heading">
+                            <span class="offer-number">العرض الثاني</span>
+                            <h3 id="family-offer-title">☀️ العائلة السعيدة ☀️</h3>
+                            <p class="offer-time">9 ص - 9 م</p>
+                        </div>
+                        <div class="offer-price">
+                            <strong>25,000</strong>
+                            <span>ريال</span>
+                        </div>
+                        <p class="offer-capacity">5 أشخاص أو أقل</p>
+                        <div class="price-note">
+                            <p><strong>أيام العرض:</strong></p>
+                            <p>السبت - الأحد - الإثنين - الثلاثاء</p>
+                            <p class="offer-extra-title">أي زيادة عن 5 أشخاص تحتسب كما يلي:</p>
+                            <ul>
+                                <li>الكبير: 1,000 ريال.</li>
+                                <li>الطفل: 500 ريال.</li>
+                                <li>الأطفال من 4 إلى 10 سنوات: كل طفلين يُحسبان بشخص واحد.</li>
+                                <li>أقل من 4 سنوات: مجاناً.</li>
+                            </ul>
+                        </div>
+                    </article>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Booking Calculator -->
+    <section id="booking" class="booking-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>احسب تكلفة حجزك</h2>
+                <p>أدخل بيانات الزيارة وسنجهز لك رسالة الحجز عبر واتساب</p>
+            </div>
+            <form class="booking-form" id="booking-form">
+                <div class="booking-fields">
+                    <label>
+                        <span>العرض</span>
+                        <select id="booking-offer" name="offer">
+                            <option value="standard">الحجز اليومي - 40,000 ريال</option>
+                            <option value="family">العائلة السعيدة - 25,000 ريال</option>
+                        </select>
+                    </label>
+                    <label>
+                        <span>تاريخ الحجز</span>
+                        <input id="booking-date" name="date" type="date" required>
+                    </label>
+                    <label>
+                        <span>عدد الكبار</span>
+                        <input id="booking-adults" name="adults" type="number" min="0" value="2" required>
+                    </label>
+                    <label>
+                        <span>أطفال من 4 إلى 10 سنوات</span>
+                        <input id="booking-children" name="children" type="number" min="0" value="0" required>
+                    </label>
+                    <label>
+                        <span>أطفال أقل من 4 سنوات</span>
+                        <input id="booking-toddlers" name="toddlers" type="number" min="0" value="0" required>
+                    </label>
+                </div>
+                <div class="booking-result" aria-live="polite">
+                    <div>
+                        <span class="booking-result-label">السعر التقديري</span>
+                        <strong id="booking-total">40,000 ريال</strong>
+                    </div>
+                    <p id="booking-message">الأطفال الأقل من 4 سنوات مجاناً.</p>
+                </div>
+                <button class="btn btn-primary booking-submit" type="submit">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>إرسال تفاصيل الحجز عبر واتساب</span>
+                </button>
+            </form>
         </div>
     </section>
 
@@ -346,47 +438,47 @@
                     </div>
                 </div>
                 <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false" aria-controls="faq1">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq2">
                         <span>كم مبلغ التأمين؟</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
-                    <div class="faq-answer" id="faq1">
+                    <div class="faq-answer" id="faq2">
                         <p>تأمين ٥٠ الف او خاتم ذهب</p>
                     </div>
                 </div>
                 <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false" aria-controls="faq2">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq3">
                         <span>هل يمكنني إلغاء أو تعديل الحجز؟</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
-                    <div class="faq-answer" id="faq2">
+                    <div class="faq-answer" id="faq3">
                         <p>نعم، يمكنك إلغاء الحجز قبل أسبوعين من موعد الحجز، كما يمكنك طلب تعديل الحجز قبل أسبوع من الموعد، وذلك حسب التوافر والإمكانية. للتفاصيل أو الاستفسار، يرجى التواصل معنا.</p>
                     </div>
                 </div>
                 <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false" aria-controls="faq3">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq4">
                         <span>ما هي وسائل الدفع المتاحة؟</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
-                    <div class="faq-answer" id="faq3">
+                    <div class="faq-answer" id="faq4">
                         <p>نقبل الدفع نقداً أو عبر التحويل محفظة جيب او الكريمي. يجب دفع 50% كعربون عند الحجز والباقي قبل موعد الحجز بيوم.</p>
                     </div>
                 </div>
                 <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false" aria-controls="faq4">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq5">
                         <span>هل يمكنني إحضار طعام من الخارج؟</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
-                    <div class="faq-answer" id="faq4">
+                    <div class="faq-answer" id="faq5">
                         <p>نعم، يمكنك إحضار طعام من الخارج.</p>
                     </div>
                 </div>
                 <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false" aria-controls="faq5">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq6">
                         <span>هل المكان مناسب للأطفال؟</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
-                    <div class="faq-answer" id="faq5">
+                    <div class="faq-answer" id="faq6">
                         <p>نعم، المكان آمن ومناسب للأطفال مع وجود ألعاب مخصصة لهم ومساحة آمنة للعب.</p>
                     </div>
                 </div>
@@ -468,7 +560,7 @@
     </section>
 
     <!-- Location Section -->
-    <section class="location">
+    <section id="contact" class="location">
         <div class="container">
             <div class="section-header">
                 <h2>موقعنا</h2>
@@ -561,6 +653,10 @@
     <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/966783112244?text=مرحبًا، أرغب في الاستفسار عن أسعار حجز شاليه Happiness." class="whatsapp-float" target="_blank" aria-label="تواصل معنا عبر واتساب">
         <i class="fab fa-whatsapp"></i>
+    </a>
+    <a href="#booking" class="mobile-booking-bar">
+        <i class="fas fa-calculator"></i>
+        <span>احسب واحجز الآن</span>
     </a>
 
     <!-- Lightbox Modal -->
