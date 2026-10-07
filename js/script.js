@@ -118,6 +118,7 @@ function initBookingCalculator() {
     const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000);
     dateInput.min = localToday.toISOString().split('T')[0];
 
+    
     function getDetails() {
         const offer = offerInput.value;
         const adults = Math.max(Number(adultsInput.value) || 0, 0);
@@ -126,9 +127,13 @@ function initBookingCalculator() {
         const childUnits = Math.ceil(children / 2);
         const capacity = offer === 'family' ? 5 : 20;
         const basePrice = offer === 'family' ? 25000 : 40000;
+        const capacity = offer === 'tent' ? 5 : 15;
+        const basePrice = offer === 'tent' ? 20000 : 40000;
+        const capacity = offer === 'diwan' ? 5 : 15;
+        const basePrice = offer === 'diwan' ? 20000 : 40000;
         const extraAdults = Math.max(adults - capacity, 0);
         const extraChildren = Math.max(childUnits - Math.max(capacity - adults, 0), 0);
-        const total = basePrice + (extraAdults * 1000) + (extraChildren * 500);
+        const total = basePrice + (extraAdults * 500) + (extraChildren * 250);
         const date = dateInput.value ? new Date(`${dateInput.value}T12:00:00`) : null;
         const familyDay = date && [0, 1, 2, 6].includes(date.getDay());
         return { offer, adults, children, toddlers, total, guests: adults + childUnits, date, familyDay };
