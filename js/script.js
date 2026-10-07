@@ -127,10 +127,10 @@ function initBookingCalculator() {
         const childUnits = Math.ceil(children / 2);
         const capacity = offer === 'family' ? 5 : 20;
         const basePrice = offer === 'family' ? 25000 : 40000;
-        // const capacity = offer === 'tent' ? 5 : 15;
-        // const basePrice = offer === 'tent' ? 20000 : 40000;
-        // const capacity = offer === 'diwan' ? 5 : 15;
-        // const basePrice = offer === 'diwan' ? 20000 : 40000;
+        const capacity = offer === 'tent' ? 5 : 15;
+        const basePrice = offer === 'tent' ? 20000 : 40000;
+        const capacity = offer === 'diwan' ? 5 : 15;
+        const basePrice = offer === 'diwan' ? 20000 : 40000;
         const extraAdults = Math.max(adults - capacity, 0);
         const extraChildren = Math.max(childUnits - Math.max(capacity - adults, 0), 0);
         const total = basePrice + (extraAdults * 500) + (extraChildren * 250);
@@ -141,7 +141,7 @@ function initBookingCalculator() {
 
     function updateSummary() {
         const details = getDetails();
-        const offerName = details.offer === 'family' ? 'العائلة السعيدة' : 'الحجز اليومي';
+        const offerName = details.offer === 'family' ? 'العائلة السعيدة' : 'الحجز اليومي' : 'الخيمة : الديوان الزجاجي;
         let message = 'الأطفال الأقل من 4 سنوات مجاناً.';
         if (details.guests < 2) message = 'يرجى إدخال شخصين على الأقل للحجز.';
         if (details.offer === 'family' && details.date && !details.familyDay) message = 'العرض متاح أيام السبت والأحد والإثنين والثلاثاء.';
