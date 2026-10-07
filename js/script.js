@@ -142,14 +142,10 @@ function initBookingCalculator() {
     function updateSummary() {
         const details = getDetails();
         const offerName = details.offer === 'family' ? 'العائلة السعيدة' : 'الحجز اليومي';
-        const offerName = details.offer === 'tent' ? 'العائلة السعيدة' : 'الحجز اليومي' : 'الخيمة : الديوان الزجاجي;
-        const offerName = details.offer === 'diwan' ? 'العائلة السعيدة' : 'الحجز اليومي' : 'الخيمة : الديوان الزجاجي;
         let message = 'الأطفال الأقل من 4 سنوات مجاناً.';
         if (details.guests < 2) message = 'يرجى إدخال شخصين على الأقل للحجز.';
         if (details.offer === 'family' && details.date && !details.familyDay) message = 'العرض متاح أيام السبت والأحد والإثنين والثلاثاء.';
         if (details.guests > (details.offer === 'family' ? 5 : 20)) message = 'تمت إضافة تكلفة الأشخاص الزائدين إلى السعر التقديري.';
-        if (details.guests > (details.offer === 'tent' ? 5 : 15)) message = 'تمت إضافة تكلفة الأشخاص الزائدين إلى السعر التقديري.';
-        if (details.guests > (details.offer === 'diwan' ? 5 : 15)) message = 'تمت إضافة تكلفة الأشخاص الزائدين إلى السعر التقديري.';
         totalElement.textContent = `${details.total.toLocaleString('en-US')} ريال`;
         messageElement.textContent = `${offerName}: ${message}`;
     }
