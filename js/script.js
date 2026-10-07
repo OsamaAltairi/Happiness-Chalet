@@ -127,10 +127,10 @@ function initBookingCalculator() {
         const childUnits = Math.ceil(children / 2);
         const capacity = offer === 'family' ? 5 : 20;
         const basePrice = offer === 'family' ? 25000 : 40000;
-        const capacity = offer === 'tent' ? 5 : 15;
-        const basePrice = offer === 'tent' ? 20000 : 40000;
-        const capacity = offer === 'diwan' ? 5 : 15;
-        const basePrice = offer === 'diwan' ? 20000 : 40000;
+        // const capacity = offer === 'tent' ? 5 : 15;
+        // const basePrice = offer === 'tent' ? 20000 : 40000;
+        // const capacity = offer === 'diwan' ? 5 : 15;
+        // const basePrice = offer === 'diwan' ? 20000 : 40000;
         const extraAdults = Math.max(adults - capacity, 0);
         const extraChildren = Math.max(childUnits - Math.max(capacity - adults, 0), 0);
         const total = basePrice + (extraAdults * 500) + (extraChildren * 250);
