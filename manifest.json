@@ -37,7 +37,7 @@
       "name": "احجز الآن",
       "short_name": "حجز",
       "description": "احجز شاليه هابينيس عبر واتساب",
-      "url": "/#prices",
+      "url": "/#booking",
       "icons": [{ "src": "images/logo.png", "sizes": "96x96" }]
     },
     {
