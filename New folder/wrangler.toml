@@ -1,0 +1,16 @@
+"$schema" = "./node_modules/wrangler/config-schema.json"
+name = "happiness-chalet"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-10-21"
+
+[vars]
+APP_ENABLED = "true"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "my-binding"
+database_id = "742a94d0-ff4e-46a6-a961-ad65983427db"
+migrations_dir = "migrations"
+
+[env.preview.vars]
+APP_ENABLED = "false"
