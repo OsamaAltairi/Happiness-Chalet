@@ -1,12 +1,12 @@
 // Service Worker for Happiness Chalet PWA
-const CACHE_NAME = 'happiness-chalet-v1';
+const CACHE_NAME = 'happiness-chalet-v2';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/script.js',
-  '/images/logo.png',
-  '/manifest.json'
+  './',
+  './index.html',
+  './css/style.css',
+  './js/script.js',
+  './images/logo.png',
+  './manifest.json'
 ];
 
 // Install event
@@ -22,6 +22,8 @@ self.addEventListener('install', event => {
 
 // Fetch event
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
     caches.match(event.request)
       .then(response => {
@@ -33,7 +35,7 @@ self.addEventListener('fetch', event => {
         // Clone the request
         const fetchRequest = event.request.clone();
         
-        return fetch(fetchRequest).then(response => {
+          return fetch(fetchRequest).then(response => {
           // Check if valid response
           if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;

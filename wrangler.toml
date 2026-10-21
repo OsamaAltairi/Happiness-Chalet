@@ -1,0 +1,24 @@
+"$schema" = "./node_modules/wrangler/config-schema.json"
+name = "happinessye"
+main = "worker.js"
+compatibility_date = "2026-10-21"
+
+[vars]
+APP_ENABLED = "true"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "my-binding"
+database_id = "742a94d0-ff4e-46a6-a961-ad65983427db"
+migrations_dir = "migrations"
+
+[env.preview.vars]
+APP_ENABLED = "false"
+
+[env.preview]
+name = "happinessye-preview"
