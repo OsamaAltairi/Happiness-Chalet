@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>إدارة الحجوزات - شاليه هابينيس</title>
+    <style>
+        :root { color-scheme: light; font-family: Cairo, Tahoma, sans-serif; color: #2c2c2c; background: #f7f4ed; }
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 24px; }
+        main { max-width: 1100px; margin: 0 auto; }
+        h1 { color: #8b4513; }
+        button, input { font: inherit; }
+        button { border: 0; border-radius: 8px; padding: 10px 16px; color: white; background: #8b4513; cursor: pointer; }
+        button:disabled { cursor: wait; opacity: .6; }
+        .toolbar, .booking-actions { display: flex; align-items: center; gap: 10px; }
+        .toolbar { justify-content: space-between; margin-bottom: 20px; }
+        .login, .booking { padding: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 16px #00000012; }
+        .login { max-width: 420px; }
+        .login label { display: grid; gap: 8px; }
+        input { width: 100%; min-height: 46px; padding: 8px 12px; border: 1px solid #bbb; border-radius: 8px; }
+        .error { color: #b42318; }
+        .notice { color: #8b4513; }
+        .bookings { display: grid; gap: 14px; }
+        .booking h2 { margin-top: 0; font-size: 1.2rem; }
+        .booking dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 20px; margin: 0; }
+        .booking dl div { display: flex; gap: 6px; }
+        .booking dt { font-weight: 700; }
+        .booking dd { margin: 0; }
+        .status { font-weight: 700; }
+        .booking-actions { margin-top: 18px; flex-wrap: wrap; }
+        .reject { background: #a52a2a; }
+        .whatsapp { color: #168b52; }
+        @media (max-width: 600px) {
+            body { padding: 14px; }
+            .booking dl { grid-template-columns: 1fr; }
+            .toolbar { align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <header class="toolbar">
+            <div>
+                <h1>إدارة الحجوزات</h1>
+                <p>راجع الطلبات المعلّقة وأكدها أو ارفضها.</p>
+            </div>
+            <button id="logout-button" type="button" hidden>تسجيل الخروج</button>
+        </header>
+        <p id="message" role="status" aria-live="polite"></p>
+        <form class="login" id="login-form">
+            <label for="admin-password">كلمة مرور الإدارة</label>
+            <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+            <button type="submit" style="margin-top: 12px;">تسجيل الدخول</button>
+        </form>
+        <section class="bookings" id="bookings" aria-live="polite"></section>
+    </main>
+    <script src="admin.js" defer></script>
+</body>
+</html>
