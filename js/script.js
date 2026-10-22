@@ -123,10 +123,18 @@ function initBookingCalculator() {
     const statusElement = document.querySelector('#booking-status');
     const submitButton = form.querySelector('[type="submit"]');
     const packageDetails = {
-        standard: { name: 'الحجز اليومي', price: 40000, capacity: 20, hours: '9 ص - 9 م' },
-        family: { name: 'العائلة السعيدة', price: 25000, capacity: 5, hours: '9 ص - 9 م' },
-        tent: { name: 'مجلس الخيمة', price: 20000, capacity: 15, hours: '1 م - 10 م' },
-        glass: { name: 'الديوان الزجاجي', price: 20000, capacity: 15, hours: '1 م - 10 م' }
+        event_20: { name: 'باقة المناسبات - 20 شخص', price: 40000, capacity: 20, hours: '10 ص - 10 م' },
+        event_30: { name: 'باقة المناسبات - 30 شخص', price: 45000, capacity: 30, hours: '10 ص - 10 م' },
+        event_40: { name: 'باقة المناسبات - 40 شخص', price: 50000, capacity: 40, hours: '10 ص - 10 م' },
+        trip_weekend_20: { name: 'باقة الرحلات - نهاية الأسبوع - 20 شخص', price: 40000, capacity: 20, hours: '9 ص - 9 م' },
+        trip_weekend_30: { name: 'باقة الرحلات - نهاية الأسبوع - 30 شخص', price: 45000, capacity: 30, hours: '9 ص - 9 م' },
+        trip_weekend_40: { name: 'باقة الرحلات - نهاية الأسبوع - 40 شخص', price: 50000, capacity: 40, hours: '9 ص - 9 م' },
+        trip_weekday_5: { name: 'باقة الرحلات - بداية الأسبوع - 5 أشخاص', price: 25000, capacity: 5, hours: '9 ص - 9 م' },
+        trip_weekday_20: { name: 'باقة الرحلات - بداية الأسبوع - 20 شخص', price: 32000, capacity: 20, hours: '9 ص - 9 م' },
+        trip_weekday_30: { name: 'باقة الرحلات - بداية الأسبوع - 30 شخص', price: 37000, capacity: 30, hours: '9 ص - 9 م' },
+        trip_weekday_40: { name: 'باقة الرحلات - بداية الأسبوع - 40 شخص', price: 42000, capacity: 40, hours: '9 ص - 9 م' },
+        picnic_tent: { name: 'باقة المقيل - مجلس الخيمة - 15 شخص', price: 22000, capacity: 15, hours: '2 م - 10 م' },
+        picnic_glass: { name: 'باقة المقيل - الديوان الزجاجي - 15 شخص', price: 22000, capacity: 15, hours: '2 م - 10 م' }
     };
     let availableDates = [];
     let calendarDaysByDate = new Map();
@@ -201,18 +209,34 @@ function initBookingCalculator() {
         const children = Number(childrenInput.value) || 0;
         const toddlers = Number(toddlersInput.value) || 0;
         const details = packageDetails[offer];
+        if (!details) throw new Error('تعذر العثور على بيانات الباقة. حدّث الصفحة وحاول مجددًا.');
         const childUnits = Math.ceil(children / 2);
         const extraAdults = Math.max(adults - details.capacity, 0);
         const extraChildren = Math.max(children - (Math.max(details.capacity - adults, 0) * 2), 0);
         const total = details.price + (extraAdults * 500) + (extraChildren * 250);
-        return { offer, adults, children, toddlers, total, guests: adults + childUnits, details };
+        return {
+            offer,
+            adults,
+            children,
+            toddlers,
+            total,
+            guests: adults + childUnits,
+            totalGuests: adults + children + toddlers,
+            details
+        };
     }
 
     function updateSummary() {
-        const details = getDetails();
-        let message = 'كل طفلين من عمر 4 إلى 10 سنوات يُحسبان شخصًا واحدًا، والأطفال دون 4 سنوات مجانًا.';
-        if (details.guests > details.details.capacity) message = 'يشمل السعر الإضافات: 500 ريال لكل كبير إضافي و250 ريالًا لكل طفل إضافي؛ ويُحسب كل طفلين شخصًا واحدًا ضمن السعة.';
-        if (details.offer === 'standard' && details.guests < 2) message = 'الحد الأدنى للحجز اليومي شخصان.';
+        let details;
+        try {
+            details = getDetails();
+        } catch (error) {
+            totalElement.textContent = '—';
+            messageElement.textContent = error.message;
+            return;
+        }
+        let message = 'كل طفلين من عمر 4 إلى 10 سنوات يُحسبان شخصًا واحدًا ضمن الباقة؛ الطفل الإضافي 250 ريالًا، والبالغ الإضافي 500 ريال، والأطفال دون 4 سنوات مجانًا.';
+        if (details.totalGuests > 100) message = 'الحد الأقصى لسعة الشاليه 100 شخص.';
         if (!availableDates.length) message = 'لا توجد مواعيد متاحة لهذه الباقة حاليًا.';
         totalElement.textContent = `${details.total.toLocaleString('en-US')} ريال`;
         messageElement.textContent = `${details.details.name} (${details.details.hours}): ${message}`;
@@ -274,7 +298,10 @@ function initBookingCalculator() {
     });
 
     form.addEventListener('input', updateSummary);
-    offerInput.addEventListener('change', loadAvailableDates);
+    offerInput.addEventListener('change', () => {
+        updateSummary();
+        loadAvailableDates();
+    });
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
         const details = getDetails();
@@ -284,8 +311,8 @@ function initBookingCalculator() {
             calendar.focus();
             return;
         }
-        if (details.offer === 'standard' && details.guests < 2) {
-            statusElement.textContent = 'الحد الأدنى للحجز اليومي شخصان.';
+        if (details.totalGuests > 100) {
+            statusElement.textContent = 'الحد الأقصى لسعة الشاليه 100 شخص.';
             adultsInput.focus();
             return;
         }
@@ -554,10 +581,11 @@ initWeather();
 // PWA Service Worker Registration
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
+        navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
             .then(registration => {
                 console.log('Service Worker registered with scope:', registration.scope);
-            })
+            return registration.update();
+        })
             .catch(error => {
                 console.log('Service Worker registration failed:', error);
             });
