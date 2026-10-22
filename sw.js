@@ -1,9 +1,9 @@
-const CACHE_NAME = 'happiness-chalet-v3';
+const CACHE_NAME = 'happiness-chalet-v4';
 const urlsToCache = [
   './',
   './index.html',
-  './css/style.css',
-  './js/script.js',
+  './css/style.css?v=20261022-booking-fix',
+  './js/script.js?v=20261022-booking-fix',
   './images/logo.png',
   './manifest.json'
 ];
