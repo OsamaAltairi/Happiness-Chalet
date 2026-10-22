@@ -1,5 +1,4 @@
-// Service Worker for Happiness Chalet PWA
-const CACHE_NAME = 'happiness-chalet-v2';
+const CACHE_NAME = 'happiness-chalet-v3';
 const urlsToCache = [
   './',
   './index.html',
@@ -9,70 +8,48 @@ const urlsToCache = [
   './manifest.json'
 ];
 
-// Install event
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting())
   );
 });
 
-// Fetch event
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
+  const requestUrl = new URL(event.request.url);
+  if (event.request.method !== 'GET' ||
+      requestUrl.origin !== self.location.origin ||
+      requestUrl.pathname.startsWith('/api/')) return;
 
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        
-        // Clone the request
-        const fetchRequest = event.request.clone();
-        
-          return fetch(fetchRequest).then(response => {
-          // Check if valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-          
-          // Clone the response
-          const responseToCache = response.clone();
-          
-          caches.open(CACHE_NAME)
-            .then(cache => {
-              cache.put(event.request, responseToCache);
-            });
-          
-          return response;
-        });
-      })
-  );
+  event.respondWith((async () => {
+    const cachedResponse = await caches.match(event.request);
+    try {
+      const response = await fetch(event.request);
+      if (response.ok && response.type === 'basic') {
+        const cache = await caches.open(CACHE_NAME);
+        await cache.put(event.request, response.clone());
+      }
+      return response;
+    } catch (error) {
+      if (cachedResponse) return cachedResponse;
+      throw error;
+    }
+  })());
 });
 
-// Activate event
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
+  event.waitUntil((async () => {
+    const cacheNames = await caches.keys();
+    await Promise.all(
+      cacheNames
+        .filter(cacheName => cacheName !== CACHE_NAME)
+        .map(cacheName => caches.delete(cacheName))
+    );
+    await self.clients.claim();
+  })());
 });
 
-// Push notifications (optional)
 self.addEventListener('push', event => {
   const title = 'شاليه هابينيس';
   const options = {
@@ -82,7 +59,7 @@ self.addEventListener('push', event => {
     vibrate: [200, 100, 200],
     tag: 'happiness-chalet-notification'
   };
-  
+
   event.waitUntil(
     self.registration.showNotification(title, options)
   );
