@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import {
     calculatePrice,
     getDateAvailability,
+    getPackageName,
     getYemenDate,
     isIsoDate,
     packages
@@ -17,14 +18,6 @@ const PORT = Number(process.env.PORT || 3000);
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 const MAX_BODY_BYTES = 16 * 1024;
-const configuredHolidays = (process.env.ADDITIONAL_HOLIDAYS || '')
-    .split(',')
-    .map((date) => date.trim())
-    .filter(Boolean);
-if (configuredHolidays.some((date) => !isIsoDate(date))) {
-    throw new Error('ADDITIONAL_HOLIDAYS must contain comma-separated valid dates in YYYY-MM-DD format.');
-}
-const additionalHolidays = new Set(configuredHolidays);
 
 if (ADMIN_PASSWORD.length < 12) {
     throw new Error('Set ADMIN_PASSWORD to a secret that is at least 12 characters long.');
@@ -135,7 +128,7 @@ function toBooking(row) {
     return {
         id: row.id,
         offer: row.offer,
-        packageName: packages[row.offer].name,
+        packageName: getPackageName(row.offer),
         date: row.booking_date,
         name: row.customer_name,
         phone: row.phone,
@@ -160,7 +153,7 @@ function validateBooking(payload) {
     if (!isIsoDate(date)) throw Object.assign(new Error('يرجى اختيار تاريخ صحيح.'), { status: 400 });
     if (date < getYemenDate()) throw Object.assign(new Error('لا يمكن حجز تاريخ مضى.'), { status: 400 });
 
-    const dateAvailability = getDateAvailability(offer, date, additionalHolidays);
+    const dateAvailability = getDateAvailability(offer, date);
     if (!dateAvailability.available) {
         throw Object.assign(new Error(dateAvailability.reason), { status: 400 });
     }
@@ -197,7 +190,7 @@ function getAvailability(offer) {
         const date = new Date(start);
         date.setUTCDate(date.getUTCDate() + offset);
         const isoDate = date.toISOString().slice(0, 10);
-        const dateAvailability = getDateAvailability(offer, isoDate, additionalHolidays);
+        const dateAvailability = getDateAvailability(offer, isoDate);
         const status = occupied.has(isoDate) ? 'booked' : dateAvailability.available ? 'available' : 'unavailable';
         days.push({
             date: isoDate,
