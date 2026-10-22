@@ -1,6 +1,12 @@
-CREATE TABLE IF NOT EXISTS bookings (
+CREATE TABLE bookings_new (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    offer TEXT NOT NULL CHECK (offer IN ('standard', 'family', 'tent', 'glass')),
+    offer TEXT NOT NULL CHECK (offer IN (
+        'standard', 'family', 'tent', 'glass',
+        'event_20', 'event_30', 'event_40',
+        'trip_weekend_20', 'trip_weekend_30', 'trip_weekend_40',
+        'trip_weekday_5', 'trip_weekday_20', 'trip_weekday_30', 'trip_weekday_40',
+        'picnic_tent', 'picnic_glass'
+    )),
     booking_date TEXT NOT NULL,
     customer_name TEXT NOT NULL,
     phone TEXT NOT NULL,
@@ -16,23 +22,23 @@ CREATE TABLE IF NOT EXISTS bookings (
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS one_active_booking_per_date
+INSERT INTO bookings_new (
+    id, offer, booking_date, customer_name, phone, adults, children, toddlers,
+    base_price, extra_adults, extra_children, total_price, status, created_at, updated_at
+)
+SELECT
+    id, offer, booking_date, customer_name, phone, adults, children, toddlers,
+    base_price, extra_adults, extra_children, total_price, status, created_at, updated_at
+FROM bookings;
+
+DROP INDEX IF EXISTS one_active_booking_per_date;
+DROP INDEX IF EXISTS bookings_created_at;
+DROP TABLE bookings;
+ALTER TABLE bookings_new RENAME TO bookings;
+
+CREATE UNIQUE INDEX one_active_booking_per_date
     ON bookings (booking_date)
     WHERE status IN ('pending', 'confirmed');
 
-CREATE INDEX IF NOT EXISTS bookings_created_at
+CREATE INDEX bookings_created_at
     ON bookings (created_at DESC, id DESC);
-
-CREATE TABLE IF NOT EXISTS admin_sessions (
-    token_hash TEXT PRIMARY KEY,
-    expires_at INTEGER NOT NULL
-);
-
-CREATE INDEX IF NOT EXISTS admin_sessions_expires_at
-    ON admin_sessions (expires_at);
-
-CREATE TABLE IF NOT EXISTS rate_limits (
-    bucket_key TEXT PRIMARY KEY,
-    window_started_at INTEGER NOT NULL,
-    request_count INTEGER NOT NULL
-);
