@@ -19,6 +19,26 @@ function json(status, payload) {
     });
 }
 
+function setStaticCacheHeaders(response, pathname) {
+    const isPageOrAppCode = pathname === '/' ||
+        pathname.endsWith('.html') ||
+        pathname.endsWith('.js') ||
+        pathname.endsWith('.css') ||
+        pathname === '/sw.js' ||
+        pathname === '/manifest.json';
+    if (!isPageOrAppCode) return response;
+
+    const headers = new Headers(response.headers);
+    headers.set('Cache-Control', 'no-store');
+    headers.set('CDN-Cache-Control', 'no-store');
+    headers.set('Cloudflare-CDN-Cache-Control', 'no-store');
+    return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers
+    });
+}
+
 export default {
     async fetch(request, env) {
         const url = new URL(request.url);
@@ -56,6 +76,7 @@ export default {
         if (!env.ASSETS) {
             return json(500, { error: 'أصول الموقع غير مربوطة في إعدادات Worker.' });
         }
-        return env.ASSETS.fetch(request);
+        const assetResponse = await env.ASSETS.fetch(request);
+        return setStaticCacheHeaders(assetResponse, pathname);
     }
 };
