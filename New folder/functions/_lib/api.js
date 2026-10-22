@@ -1,6 +1,7 @@
 import {
     calculatePrice,
     getDateAvailability,
+    getPackageName,
     getYemenDate,
     isIsoDate,
     packages
@@ -47,14 +48,6 @@ function ensureApiEnabled(env) {
     if (env.APP_ENABLED === 'false') {
         fail(503, 'الحجز غير مفعّل على بيئة المعاينة.');
     }
-}
-
-function getAdditionalHolidays(env) {
-    const values = (env.ADDITIONAL_HOLIDAYS || '').split(',').map((date) => date.trim()).filter(Boolean);
-    if (values.some((date) => !isIsoDate(date))) {
-        throw new Error('ADDITIONAL_HOLIDAYS must contain valid YYYY-MM-DD dates separated by commas.');
-    }
-    return new Set(values);
 }
 
 function requireSameOrigin(request) {
@@ -145,7 +138,7 @@ function toBooking(row) {
     return {
         id: row.id,
         offer: row.offer,
-        packageName: packages[row.offer].name,
+        packageName: getPackageName(row.offer),
         date: row.booking_date,
         name: row.customer_name,
         phone: row.phone,
@@ -170,7 +163,7 @@ function validateBooking(payload, env) {
     if (!isIsoDate(date)) fail(400, 'يرجى اختيار تاريخ صحيح.');
     if (date < getYemenDate()) fail(400, 'لا يمكن حجز تاريخ مضى.');
 
-    const dateAvailability = getDateAvailability(offer, date, getAdditionalHolidays(env));
+    const dateAvailability = getDateAvailability(offer, date);
     if (!dateAvailability.available) fail(400, dateAvailability.reason);
 
     const name = typeof payload.name === 'string' ? payload.name.trim() : '';
@@ -190,7 +183,7 @@ function validateBooking(payload, env) {
     return { offer, date, name, phone, adults, children, toddlers, quote };
 }
 
-async function getAvailability(db, offer, env) {
+async function getAvailability(db, offer) {
     if (!packages[offer]) return null;
     const occupiedRows = await db.prepare(`
         SELECT booking_date FROM bookings WHERE status IN ('pending', 'confirmed')
@@ -199,12 +192,11 @@ async function getAvailability(db, offer, env) {
     const today = getYemenDate();
     const days = [];
     const start = new Date(`${today}T12:00:00.000Z`);
-    const holidays = getAdditionalHolidays(env);
     for (let offset = 0; offset <= 365; offset += 1) {
         const date = new Date(start);
         date.setUTCDate(date.getUTCDate() + offset);
         const isoDate = date.toISOString().slice(0, 10);
-        const availability = getDateAvailability(offer, isoDate, holidays);
+        const availability = getDateAvailability(offer, isoDate);
         const status = occupied.has(isoDate) ? 'booked' : availability.available ? 'available' : 'unavailable';
         days.push({
             date: isoDate,
@@ -231,7 +223,7 @@ async function securePasswordMatches(input, expected) {
 export function availability(request, env) {
     return respond(env, async () => {
         const db = getDatabase(env);
-        const days = await getAvailability(db, new URL(request.url).searchParams.get('offer'), env);
+        const days = await getAvailability(db, new URL(request.url).searchParams.get('offer'));
         if (!days) fail(400, 'الباقة غير معروفة.');
         return json(200, {
             days,
