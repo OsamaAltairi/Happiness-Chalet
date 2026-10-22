@@ -1,20 +1,26 @@
 'use strict';
 
 const packages = Object.freeze({
-    standard: Object.freeze({ name: 'الحجز اليومي', price: 40000, capacity: 20, hours: '9 ص - 9 م' }),
-    family: Object.freeze({ name: 'العائلة السعيدة', price: 25000, capacity: 5, hours: '9 ص - 9 م' }),
-    tent: Object.freeze({ name: 'مجلس الخيمة', price: 20000, capacity: 15, hours: '1 م - 10 م' }),
-    glass: Object.freeze({ name: 'الديوان الزجاجي', price: 20000, capacity: 15, hours: '1 م - 10 م' })
+    event_20: Object.freeze({ name: 'باقة المناسبات - 20 شخص', category: 'المناسبات', price: 40000, capacity: 20, hours: '10 ص - 10 م', days: null }),
+    event_30: Object.freeze({ name: 'باقة المناسبات - 30 شخص', category: 'المناسبات', price: 45000, capacity: 30, hours: '10 ص - 10 م', days: null }),
+    event_40: Object.freeze({ name: 'باقة المناسبات - 40 شخص', category: 'المناسبات', price: 50000, capacity: 40, hours: '10 ص - 10 م', days: null }),
+    trip_weekend_20: Object.freeze({ name: 'باقة الرحلات - نهاية الأسبوع - 20 شخص', category: 'الرحلات - نهاية الأسبوع', price: 40000, capacity: 20, hours: '9 ص - 9 م', days: Object.freeze([3, 4, 5]) }),
+    trip_weekend_30: Object.freeze({ name: 'باقة الرحلات - نهاية الأسبوع - 30 شخص', category: 'الرحلات - نهاية الأسبوع', price: 45000, capacity: 30, hours: '9 ص - 9 م', days: Object.freeze([3, 4, 5]) }),
+    trip_weekend_40: Object.freeze({ name: 'باقة الرحلات - نهاية الأسبوع - 40 شخص', category: 'الرحلات - نهاية الأسبوع', price: 50000, capacity: 40, hours: '9 ص - 9 م', days: Object.freeze([3, 4, 5]) }),
+    trip_weekday_5: Object.freeze({ name: 'باقة الرحلات - بداية الأسبوع - 5 أشخاص', category: 'الرحلات - بداية الأسبوع', price: 25000, capacity: 5, hours: '9 ص - 9 م', days: Object.freeze([6, 0, 1, 2]) }),
+    trip_weekday_20: Object.freeze({ name: 'باقة الرحلات - بداية الأسبوع - 20 شخص', category: 'الرحلات - بداية الأسبوع', price: 32000, capacity: 20, hours: '9 ص - 9 م', days: Object.freeze([6, 0, 1, 2]) }),
+    trip_weekday_30: Object.freeze({ name: 'باقة الرحلات - بداية الأسبوع - 30 شخص', category: 'الرحلات - بداية الأسبوع', price: 37000, capacity: 30, hours: '9 ص - 9 م', days: Object.freeze([6, 0, 1, 2]) }),
+    trip_weekday_40: Object.freeze({ name: 'باقة الرحلات - بداية الأسبوع - 40 شخص', category: 'الرحلات - بداية الأسبوع', price: 42000, capacity: 40, hours: '9 ص - 9 م', days: Object.freeze([6, 0, 1, 2]) }),
+    picnic_tent: Object.freeze({ name: 'باقة المقيل - مجلس الخيمة - 15 شخص', category: 'المقيل', price: 22000, capacity: 15, hours: '2 م - 10 م', days: Object.freeze([6, 0, 1, 2]) }),
+    picnic_glass: Object.freeze({ name: 'باقة المقيل - الديوان الزجاجي - 15 شخص', category: 'المقيل', price: 22000, capacity: 15, hours: '2 م - 10 م', days: Object.freeze([6, 0, 1, 2]) })
 });
 
-const offerWeekdays = new Set([0, 1, 2, 6]);
-const fixedHolidays = new Set(['05-01', '05-22', '09-26', '10-14', '11-30']);
-const hijriDateFormatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
-    day: 'numeric',
-    month: 'numeric',
-    timeZone: 'UTC'
+const legacyPackageNames = Object.freeze({
+    standard: 'الحجز اليومي',
+    family: 'العائلة السعيدة',
+    tent: 'مجلس الخيمة',
+    glass: 'الديوان الزجاجي'
 });
-
 function getYemenDate(date = new Date()) {
     const parts = new Intl.DateTimeFormat('en-CA', {
         timeZone: 'Asia/Aden',
@@ -32,32 +38,25 @@ function isIsoDate(value) {
     return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value;
 }
 
-function isOfficialHoliday(date, additionalHolidays = new Set()) {
-    if (additionalHolidays.has(date)) return true;
-    const monthDay = date.slice(5);
-    if (fixedHolidays.has(monthDay)) return true;
-
-    const parts = hijriDateFormatter.formatToParts(new Date(`${date}T12:00:00.000Z`));
-    const hijri = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
-    const month = Number(hijri.month);
-    const day = Number(hijri.day);
-    return (month === 1 && day === 1) ||
-        (month === 10 && day >= 1 && day <= 3) ||
-        (month === 12 && day >= 10 && day <= 13);
-}
-
-function getDateAvailability(offer, date, additionalHolidays = new Set()) {
-    if (!packages[offer]) return { available: false, reason: 'الباقة غير معروفة.' };
+function getDateAvailability(offer, date) {
+    const details = packages[offer];
+    if (!details) return { available: false, reason: 'الباقة غير معروفة.' };
     if (!isIsoDate(date)) return { available: false, reason: 'التاريخ غير صالح.' };
 
-    const weekday = new Date(`${date}T00:00:00.000Z`).getUTCDay();
-    if (offer !== 'standard' && !offerWeekdays.has(weekday)) {
-        return { available: false, reason: 'العروض متاحة من السبت إلى الثلاثاء فقط.' };
-    }
-    if ((offer === 'tent' || offer === 'glass') && isOfficialHoliday(date, additionalHolidays)) {
-        return { available: false, reason: 'لا يسري العرض في الإجازات الرسمية والأعياد.' };
+    if (details.days) {
+        const weekday = new Date(`${date}T00:00:00.000Z`).getUTCDay();
+        if (!details.days.includes(weekday)) {
+            const days = offer.startsWith('trip_weekend')
+                ? 'من الأربعاء إلى الجمعة'
+                : 'من السبت إلى الثلاثاء';
+            return { available: false, reason: `هذه الباقة متاحة ${days} فقط.` };
+        }
     }
     return { available: true, reason: '' };
+}
+
+function getPackageName(offer) {
+    return packages[offer]?.name || legacyPackageNames[offer] || 'باقة غير معروفة';
 }
 
 function calculatePrice(offer, adults, children, toddlers) {
@@ -66,11 +65,12 @@ function calculatePrice(offer, adults, children, toddlers) {
     if (![adults, children, toddlers].every((count) => Number.isSafeInteger(count) && count >= 0 && count <= 100)) {
         throw new Error('أعداد الأشخاص غير صالحة.');
     }
+    if (adults + children + toddlers > 100) {
+        throw new Error('الحد الأقصى لسعة الشاليه 100 شخص.');
+    }
 
     const childUnits = Math.ceil(children / 2);
     const guests = adults + childUnits;
-    if (offer === 'standard' && guests < 2) throw new Error('الحد الأدنى للحجز اليومي شخصان.');
-
     const extraAdults = Math.max(adults - details.capacity, 0);
     const includedCapacityForChildren = Math.max(details.capacity - adults, 0);
     const extraChildren = Math.max(children - (includedCapacityForChildren * 2), 0);
@@ -86,8 +86,8 @@ function calculatePrice(offer, adults, children, toddlers) {
 export {
     calculatePrice,
     getDateAvailability,
+    getPackageName,
     getYemenDate,
     isIsoDate,
-    isOfficialHoliday,
     packages
 };
